@@ -5,7 +5,9 @@ import tweepy
 
 db_client = pymongo.MongoClient("mongodb://localhost:27017/")
 db_twitter = db_client["twitter"]
-user_col = db_twitter["user"]
+new_tweet = db_twitter["new_tweet"]
+retweet = db_twitter["retweet"]
+hashtag = db_twitter["hashtag"]
 
 with open("api.json", "r") as f:
     text = json.load(f)

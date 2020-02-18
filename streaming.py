@@ -18,15 +18,20 @@ class StreamListener(tweepy.StreamListener):
         followers = status.user.followers_count
         id_string = status.id_str
         tweet_created = status.created_at
-        # retweets = status.retweet_count
+        retweets = status.retweet_count
         blob = TextBlob(text)
         sent = blob.sentiment
         polarity = sent.polarity
         subjectivity = sent.subjectivity
-        user_col.insert_one({"description": description, "name": name, "location": loc, "text": text,
-                             "coordinates": coords, "user_created": user_created, "followers": followers,
-                             "id": id_string, "tweet_created": tweet_created, "sentiment_polarity": polarity,
-                             "subjectivity": subjectivity})
+        tweet_json = {"description": description, "name": name, "location": loc, "text": text,
+                      "coordinates": coords, "user_created": user_created, "followers": followers,
+                      "id": id_string, "tweet_created": tweet_created, "retweets": retweets,
+                      "sentiment_polarity": polarity,
+                      "subjectivity": subjectivity}
+        if "RT @" in status.text:
+            retweet.insert_one(tweet_json)
+        else:
+            new_tweet.insert_one(tweet_json)
 
     def on_error(self, status_code):
         if status_code == 420:
