@@ -20,12 +20,13 @@ class StreamListener(tweepy.StreamListener):
         followers = status.user.followers_count
         id_string = status.id_str
         tweet_created = status.created_at
+        hashtags = status.emtities['hashtags']
         retweets = status.retweet_count
         blob = TextBlob(text)
         sent = blob.sentiment
         polarity = sent.polarity
         subjectivity = sent.subjectivity
-        tweet_json = {"description": description, "name": name, "location": loc, "text": text,
+        tweet_json = {"description": description, "hashtags": hashtags, "name": name, "location": loc, "text": text,
                       "coordinates": coords, "user_created": user_created, "followers": followers,
                       "id": id_string, "tweet_created": tweet_created, "retweets": retweets,
                       "sentiment_polarity": polarity,
