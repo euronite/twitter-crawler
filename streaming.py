@@ -3,7 +3,6 @@ from textblob import TextBlob
 
 from config import *
 from filter import *
-import time
 
 
 class StreamListener(tweepy.StreamListener):
@@ -20,7 +19,7 @@ class StreamListener(tweepy.StreamListener):
         followers = status.user.followers_count
         id_string = status.id_str
         tweet_created = status.created_at
-        hashtags = status.emtities['hashtags']
+        hashtags = status.entities['hashtags']
         retweets = status.retweet_count
         blob = TextBlob(text)
         sent = blob.sentiment
@@ -32,9 +31,11 @@ class StreamListener(tweepy.StreamListener):
                       "sentiment_polarity": polarity,
                       "subjectivity": subjectivity}
         if "RT @" in status.text:
-            print(status.retweeted_status.user.screen_name)
             tweet_json['retweet_user'] = status.retweeted_status.user.screen_name
             retweet.insert_one(tweet_json)
+        elif status.is_quote_status:
+            tweet_json['retweet_user'] = status.retweeted_status.user.screen_name
+            quote_tweet.insert_one(tweet_json)
         else:
             new_tweet.insert_one(tweet_json)
 
@@ -43,7 +44,7 @@ class StreamListener(tweepy.StreamListener):
             return False
 
 
-#retweet['retweet'].drop()
+# retweet['retweet'].drop()
 stream_listener = StreamListener()
 stream = tweepy.Stream(auth=api.auth, listener=stream_listener)
 stream.filter(track=filter_list, languages=['en'])
