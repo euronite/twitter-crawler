@@ -4,7 +4,7 @@ from textblob import TextBlob
 
 def hashtag_search(search_hashtag: str):
     """
-    Searches for hashtag using twitter API and returns 100 tweets
+    Searches for hashtag using twitter API and returns 100 tweets which is then added to the DB
     :param search_hashtag:
     :return:
     """
@@ -12,51 +12,15 @@ def hashtag_search(search_hashtag: str):
     for status in tweepy.Cursor(api.search, q="#" + search_hashtag, rpp=100).items(
         number_of_tweets
     ):
-        name = status.user.screen_name
-        description = status.user.description
-        loc = status.user.location
-        tweet_text = status.text
-        coords = status.coordinates
-        if coords is not None:  # convert coord to string
-            coords = json.dumps(coords)
-        user_created = status.user.created_at
-        followers = status.user.followers_count
-        id_string = status.id_str
-        tweet_created = status.created_at
-        hashtags = status.entities["hashtags"]
-        retweets = status.retweet_count
-        blob = TextBlob(tweet_text)
-        sent = blob.sentiment
-        polarity = sent.polarity
-        subjectivity = sent.subjectivity
-        tweet_json = {
-            "description": description,
-            "hashtags": hashtags,
-            "name": name,
-            "location": loc,
-            "text": tweet_text,
-            "coordinates": coords,
-            "user_created": user_created,
-            "followers": followers,
-            "id": id_string,
-            "tweet_created": tweet_created,
-            "retweets": retweets,
-            "sentiment_polarity": polarity,
-            "subjectivity": subjectivity,
-        }
-        if "RT @" in status.text:
-            tweet_json["retweet_user"] = status.retweeted_status.user.screen_name
-            retweet.insert_one(tweet_json)
-        else:
-            new_tweet.insert_one(tweet_json)
+        insert_tweet_to_db(status)
 
 
-def user_search(user: str):
+def user_search(user_name):
     """
     This gets tweets from a specific user
-    :param user:
+    :param user_name: this is the username of a twitter user
     :return:
     """
-
-
-hashtag_search("Brexit")
+    tweets = api.user_timeline(screen_name=user_name, count=100, include_rts=True)
+    for tweet in tweets:
+        insert_tweet_to_db(tweet)
