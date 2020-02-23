@@ -11,7 +11,7 @@ class StreamListener(tweepy.StreamListener):
         name = status.user.screen_name
         description = status.user.description
         loc = status.user.location
-        text = status.text
+        tweet_text = status.text
         coords = status.coordinates
         if coords is not None:  # convert coord to string
             coords = json.dumps(coords)
@@ -25,7 +25,7 @@ class StreamListener(tweepy.StreamListener):
         sent = blob.sentiment
         polarity = sent.polarity
         subjectivity = sent.subjectivity
-        tweet_json = {"description": description, "hashtags": hashtags, "name": name, "location": loc, "text": text,
+        tweet_json = {"description": description, "hashtags": hashtags, "name": name, "location": loc, "text": tweet_text,
                       "coordinates": coords, "user_created": user_created, "followers": followers,
                       "id": id_string, "tweet_created": tweet_created, "retweets": retweets,
                       "sentiment_polarity": polarity,
