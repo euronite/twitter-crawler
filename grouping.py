@@ -1,6 +1,7 @@
 from config import *
 import matplotlib.pyplot as plt
 import networkx as nx
+from rest_api import *
 
 all_tweets = list(new_tweet.find({}))
 all_retweets = list(retweet.find({}))
@@ -19,8 +20,15 @@ for tweet in all_tweets:
     mean_subjectivity = mean_subjectivity / len(all_retweets)
 print("The mean subjectivity of retweets is: ", mean_subjectivity)
 
-# graph = nx.DiGraph()
-# for i in all_retweets:
-# graph.add_edge(i['retweet_user'], i['name'])
-# nx.draw_networkx(graph)
-# plt.show()
+
+def directed_graph(list_of_tweets):
+    """
+    This generates a directed graph of users in regards to who tweeted whom
+    :param list_of_tweets:
+    :return:
+    """
+    digraph = nx.DiGraph()
+    for i in list_of_tweets:
+        digraph.add_edge(i["retweet_user"], i["name"])
+    nx.draw_networkx(digraph)
+    plt.show()
