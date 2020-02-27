@@ -1,24 +1,71 @@
-from config import *
 import matplotlib.pyplot as plt
 import networkx as nx
-from rest_api import *
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.cluster import KMeans
+from collections import Counter
+from config import *
+
+# from rest_api import *
 
 all_tweets = list(new_tweet.find({}))
 all_retweets = list(retweet.find({}))
+all_quote_tweets = list(quote_tweet.find({}))
+
+length_all_quote_tweets = len(all_quote_tweets)
+length_all_retweets = len(all_retweets)
+length_all_tweets = len(all_tweets)
+
+print(
+    "Number of tweets collected: {}".format(
+        length_all_quote_tweets + length_all_retweets + length_all_tweets
+    )
+)
+
+all_tweets_text = []
+for tweet in all_tweets:
+    all_tweets_text.append(tweet["text"])
 
 # Calculates mean sentiment, where 1 is very positive, -1 is very negative
-mean_sentiment = 0
+mean_sentiment = 0.0
+
 for tweet in all_tweets:
     mean_sentiment += tweet["sentiment_polarity"]
-mean_sentiment = mean_sentiment / len(all_tweets)
+mean_sentiment = mean_sentiment / length_all_tweets
 print("The mean sentiment of tweets is: ", mean_sentiment)
 
 # Calculates mean subjectivity, where 1 is very subjective, -1 is very objective
-mean_subjectivity = 0
+mean_subjectivity = 0.0
+
 for tweet in all_tweets:
     mean_subjectivity += tweet["subjectivity"]
-    mean_subjectivity = mean_subjectivity / len(all_retweets)
+mean_subjectivity = mean_subjectivity / length_all_tweets
 print("The mean subjectivity of retweets is: ", mean_subjectivity)
+
+
+def cluster_text(list_of_text):
+    # This uses k-means clustering from sklearn to cluster the text
+    # Based on the tutorial here: https://pythonprogramminglanguage.com/kmeans-text-clustering/
+    vectorizer = TfidfVectorizer(stop_words="english")
+    transform = vectorizer.fit_transform(list_of_text)
+
+    true_k = 70
+    model = KMeans(n_clusters=true_k, init="k-means++", max_iter=100, n_init=1)
+    model.fit(transform)
+    clusters = {}
+    for i in model.labels_:
+        if not i in clusters:
+            clusters[i] = 1
+        else:
+            clusters[i] += 1
+    print(clusters)
+
+    order_centroids = model.cluster_centers_.argsort()[:, ::-1]
+    terms = vectorizer.get_feature_names()
+    print("Top terms per cluster:")
+    for i in range(true_k):
+        print("Cluster {}:".format(i)),
+        for ind in order_centroids[i, :10]:
+            print(terms[ind])
 
 
 def directed_graph(list_of_tweets):
@@ -32,3 +79,47 @@ def directed_graph(list_of_tweets):
         digraph.add_edge(i["retweet_user"], i["name"])
     nx.draw_networkx(digraph)
     plt.show()
+
+
+def extract_important(tweet_objects_list):
+    # This section extracts important information such as most common hashtags
+    hashtag_dictionary = {}
+    for tweet in tweet_objects_list:
+        if "hashtags" in tweet:
+            for individual_hashtag in tweet["hashtags"]:
+                if not individual_hashtag["text"].lower() in hashtag_dictionary:
+                    hashtag_dictionary[individual_hashtag["text"].lower()] = 1
+                else:
+                    hashtag_dictionary[individual_hashtag["text"].lower()] += 1
+    frequency = Counter(hashtag_dictionary)
+    most_frequent_hashtags = frequency.most_common(50)
+
+    user_dictionary = {}
+    for tweet in tweet_objects_list:
+        if "user_mentions" in tweet:
+            for individual_user in tweet["user_mentions"]:
+                if not individual_user["screen_name"] in user_dictionary:
+                    user_dictionary[individual_user["screen_name"].lower()] = 1
+                else:
+                    user_dictionary[individual_user["screen_name"].lower()] += 1
+    frequency = Counter(user_dictionary)
+    most_frequent_users = frequency.most_common(50)
+    symbol_dictionary = {}
+    for tweet in tweet_objects_list:
+        if "symbols" in tweet:
+            for individual_symbol in tweet["symbols"]:
+                if not individual_symbol["text"] in symbol_dictionary:
+                    symbol_dictionary[individual_symbol["text"]] = 1
+                else:
+                    symbol_dictionary[individual_symbol["text"]] += 1
+    frequency = Counter(symbol_dictionary)
+    most_frequent_symbols = frequency.most_common(50)
+    print("Most mentioned users:", most_frequent_users)
+    print("Most used symbols: ", most_frequent_symbols)
+    print("Most used hashtags", most_frequent_hashtags)
+    return most_frequent_hashtags
+
+
+cluster_text(all_tweets_text)
+
+frequent_hashtags = extract_important(all_tweets)
