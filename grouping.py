@@ -5,46 +5,55 @@ from sklearn.cluster import KMeans
 from collections import Counter
 from config import *
 
-# from rest_api import *
 
-all_tweets = list(new_tweet.find({}))
-all_retweets = list(retweet.find({}))
-all_quote_tweets = list(quote_tweet.find({}))
+def get_all_new_tweets_text(all_new_tweets):
+    """
+    Gets a list of tweets text from new tweets
+    :return: list of all tweets text
+    """
+    all_tweets_text = []
+    for tweet in all_new_tweets:
+        all_tweets_text.append(tweet["text"])
+    return all_tweets_text
 
-length_all_quote_tweets = len(all_quote_tweets)
-length_all_retweets = len(all_retweets)
-length_all_tweets = len(all_tweets)
 
-print(
-    "Number of tweets collected: {}".format(
-        length_all_quote_tweets + length_all_retweets + length_all_tweets
+def statistics(all_new_tweets, all_retweets, all_quote_tweets):
+    length_all_quote_tweets = len(all_quote_tweets)
+    length_all_retweets = len(all_retweets)
+    length_all_tweets = len(all_new_tweets)
+
+    # print(db_twitter.collections.stats())
+    print(
+        "Number of tweets collected: {}".format(
+            length_all_quote_tweets + length_all_retweets + length_all_tweets
+        )
     )
-)
 
-all_tweets_text = []
-for tweet in all_tweets:
-    all_tweets_text.append(tweet["text"])
+    # Calculates mean sentiment, where 1 is very positive, -1 is very negative
+    mean_sentiment = 0.0
 
-# Calculates mean sentiment, where 1 is very positive, -1 is very negative
-mean_sentiment = 0.0
+    for tweet in all_new_tweets:
+        mean_sentiment += tweet["sentiment_polarity"]
+    mean_sentiment = mean_sentiment / length_all_tweets
+    print("The mean sentiment of tweets is: ", mean_sentiment)
 
-for tweet in all_tweets:
-    mean_sentiment += tweet["sentiment_polarity"]
-mean_sentiment = mean_sentiment / length_all_tweets
-print("The mean sentiment of tweets is: ", mean_sentiment)
+    # Calculates mean subjectivity, where 1 is very subjective, -1 is very objective
+    mean_subjectivity = 0.0
 
-# Calculates mean subjectivity, where 1 is very subjective, -1 is very objective
-mean_subjectivity = 0.0
-
-for tweet in all_tweets:
-    mean_subjectivity += tweet["subjectivity"]
-mean_subjectivity = mean_subjectivity / length_all_tweets
-print("The mean subjectivity of retweets is: ", mean_subjectivity)
+    for tweet in all_new_tweets:
+        mean_subjectivity += tweet["subjectivity"]
+    mean_subjectivity = mean_subjectivity / length_all_tweets
+    print("The mean subjectivity of retweets is: ", mean_subjectivity)
 
 
 def cluster_text(list_of_text):
-    # This uses k-means clustering from sklearn to cluster the text
-    # Based on the tutorial here: https://pythonprogramminglanguage.com/kmeans-text-clustering/
+    """
+    This uses k-means clustering from sklearn to cluster the text
+    Based on the tutorial here: https://pythonprogramminglanguage.com/kmeans-text-clustering/
+    :param list_of_text: This is a list of tweet texts
+    :return:
+    """
+
     vectorizer = TfidfVectorizer(stop_words="english")
     transform = vectorizer.fit_transform(list_of_text)
 
@@ -71,7 +80,7 @@ def cluster_text(list_of_text):
 def directed_graph(list_of_tweets):
     """
     This generates a directed graph of users in regards to who tweeted whom
-    :param list_of_tweets:
+    :param list_of_tweets: THis is a list of tweet texts to analyse
     :return:
     """
     digraph = nx.DiGraph()
@@ -118,8 +127,3 @@ def extract_important(tweet_objects_list):
     print("Most used symbols: ", most_frequent_symbols)
     print("Most used hashtags", most_frequent_hashtags)
     return most_frequent_hashtags
-
-
-cluster_text(all_tweets_text)
-
-frequent_hashtags = extract_important(all_tweets)

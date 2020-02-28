@@ -4,8 +4,8 @@ from config import *
 def hashtag_search(search_hashtag: str):
     """
     Searches for hashtag using twitter API and returns 100 tweets which is then added to the DB
-    :param search_hashtag:
-    :return:
+    :param search_hashtag: hashtag to search for on twitter
+    :return: None
     """
     number_of_tweets = 100
     for status in tweepy.Cursor(api.search, q="#" + search_hashtag, rpp=100).items(
@@ -15,6 +15,11 @@ def hashtag_search(search_hashtag: str):
 
 
 def text_search(search_string: str):
+    """
+    REST request for a specific text. Retrieves 100 tweets based on that.
+    :param search_string: search string to look for on twitter
+    :return: None
+    """
     number_of_tweets = 100
     for status in tweepy.Cursor(api.search, q=search_string, rpp=100).items(
         number_of_tweets
@@ -26,7 +31,7 @@ def user_search(user_name):
     """
     This gets tweets from a specific user
     :param user_name: this is the username of a twitter user
-    :return:
+    :return: None
     """
     tweets = api.user_timeline(screen_name=user_name, count=100, include_rts=True)
     for tweet in tweets:
@@ -43,14 +48,19 @@ def trending_search():
     return trends_list
 
 
-while True:
-    print("REST API getting trending tweets")
-    for i in trending_search():
-        print("Retrieving tweets for {}".format(i))
-        try:
-            if i[0] == "#":
-                hashtag_search(i[1:])
-            else:
-                text_search(i)
-        except Exception as e:
-            print(e)
+def start_rest_probe_trends():
+    """
+    This starts the rest api probe
+    :return:
+    """
+    while True:
+        print("REST API getting trending tweets")
+        for i in trending_search():
+            print("Retrieving tweets for {}".format(i))
+            try:
+                if i[0] == "#":
+                    hashtag_search(i[1:])
+                else:
+                    text_search(i)
+            except Exception as e:
+                print(e)

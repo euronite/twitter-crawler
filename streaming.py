@@ -1,5 +1,6 @@
 from config import *
 from filter import *
+import time
 
 
 class StreamListener(tweepy.StreamListener):
@@ -11,7 +12,9 @@ class StreamListener(tweepy.StreamListener):
             return False
 
 
-# retweet['retweet'].drop()
-stream_listener = StreamListener()
-stream = tweepy.Stream(auth=api.auth, listener=stream_listener)
-stream.filter(track=filter_list, languages=["en"])
+def run_stream(runtime=1800):
+    stream_listener = StreamListener()
+    stream = tweepy.Stream(auth=api.auth, listener=stream_listener)
+    stream.filter(track=filter_list, languages=["en"], is_async=True)
+    time.sleep(runtime)
+    stream.disconnect()
