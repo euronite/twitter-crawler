@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.cluster import KMeans
+from sklearn.cluster import MiniBatchKMeans
 from collections import Counter
 from config import *
 
@@ -57,8 +57,8 @@ def cluster_text(list_of_text):
     vectorizer = TfidfVectorizer(stop_words="english")
     transform = vectorizer.fit_transform(list_of_text)
 
-    true_k = 70
-    model = KMeans(n_clusters=true_k, init="k-means++", max_iter=100, n_init=1)
+    true_k = 40
+    model = MiniBatchKMeans(n_clusters=true_k, init="k-means++", max_iter=100, n_init=1)
     model.fit(transform)
     clusters = {}
     for i in model.labels_:
@@ -66,15 +66,17 @@ def cluster_text(list_of_text):
             clusters[i] = 1
         else:
             clusters[i] += 1
-    print(clusters)
 
     order_centroids = model.cluster_centers_.argsort()[:, ::-1]
     terms = vectorizer.get_feature_names()
     print("Top terms per cluster:")
     for i in range(true_k):
-        print("Cluster {}:".format(i)),
+        print("Cluster {}:".format(i))
+        print("Number of tweets in this cluster: {}".format(clusters[i]))
+        term_list = []
         for ind in order_centroids[i, :10]:
-            print(terms[ind])
+            term_list.append(terms[ind])
+        print("Keywords: {}".format(", ".join(term_list)))
 
 
 def directed_graph(list_of_tweets):

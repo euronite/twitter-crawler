@@ -3,7 +3,7 @@ from grouping import *
 from streaming import run_stream
 
 print("Running Streaming API!")
-run_stream(1)
+# run_stream(1)
 print("Finished Streaming API!")
 # start_rest_probe_trends()
 all_new_tweets = list(new_tweet.find({}))
