@@ -1,11 +1,16 @@
 from config import *
 from filter import *
 import time
+from pymongo.errors import DuplicateKeyError
 
 
 class StreamListener(tweepy.StreamListener):
     def on_status(self, status):
-        insert_tweet_to_db(status)
+        try:
+            insert_tweet_to_db(status)
+        except DuplicateKeyError:
+            # TODO ask for help with incrementing errors
+            print("Error")
 
     def on_error(self, status_code):
         if status_code == 420:

@@ -3,7 +3,6 @@ import networkx as nx
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import MiniBatchKMeans
 from collections import Counter
-from config import *
 
 
 def get_all_new_tweets_text(all_new_tweets):
@@ -93,6 +92,11 @@ def directed_graph(list_of_tweets):
 
 
 def extract_important(tweet_objects_list):
+    """
+    this extracts most mentioned users, symbols and hashtags and returns them as a list
+    :param tweet_objects_list: list of tweet objects
+    :return: most_frequent_hashtags, most_frequent_users, most_frequent_symbols
+    """
     # This section extracts important information such as most common hashtags
     hashtag_dictionary = {}
     for tweet in tweet_objects_list:
@@ -125,7 +129,4 @@ def extract_important(tweet_objects_list):
                     symbol_dictionary[individual_symbol["text"]] += 1
     frequency = Counter(symbol_dictionary)
     most_frequent_symbols = frequency.most_common(50)
-    print("Most mentioned users:", most_frequent_users)
-    print("Most used symbols: ", most_frequent_symbols)
-    print("Most used hashtags", most_frequent_hashtags)
-    return most_frequent_hashtags
+    return most_frequent_hashtags, most_frequent_users, most_frequent_symbols

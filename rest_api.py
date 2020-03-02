@@ -11,7 +11,10 @@ def hashtag_search(search_hashtag: str):
     for status in tweepy.Cursor(api.search, q="#" + search_hashtag, rpp=100).items(
         number_of_tweets
     ):
-        insert_tweet_to_db(status)
+        try:
+            insert_tweet_to_db(status)
+        except Exception as e:
+            print(e)
 
 
 def text_search(search_string: str):
@@ -24,7 +27,10 @@ def text_search(search_string: str):
     for status in tweepy.Cursor(api.search, q=search_string, rpp=100).items(
         number_of_tweets
     ):
-        insert_tweet_to_db(status)
+        try:
+            insert_tweet_to_db(status)
+        except Exception as e:
+            print(e)
 
 
 def user_search(user_name):
@@ -33,9 +39,12 @@ def user_search(user_name):
     :param user_name: this is the username of a twitter user
     :return: None
     """
-    tweets = api.user_timeline(screen_name=user_name, count=100, include_rts=True)
+    tweets = api.user_timeline(screen_name=user_name, count=200, include_rts=True)
     for tweet in tweets:
-        insert_tweet_to_db(tweet)
+        try:
+            insert_tweet_to_db(tweet)
+        except Exception as e:
+            print(e)
 
 
 def trending_search():
