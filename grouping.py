@@ -87,6 +87,7 @@ def cluster_text(list_of_text):
             with open("clustering.txt", "a") as f:
                 f.write(terms[ind] + "\n")
             term_list.append(terms[ind] + "\n")
+    return model.labels_
 
 
 def extract_important(tweet_objects_list):

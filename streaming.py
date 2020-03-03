@@ -11,6 +11,7 @@ class StreamListener(tweepy.StreamListener):
         except DuplicateKeyError:
             # TODO ask for help with incrementing errors
             # TODO ask lecturer what sample data
+            # TODO what is tabular data
             pass
 
     def on_error(self, status_code):

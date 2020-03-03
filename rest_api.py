@@ -49,10 +49,12 @@ def user_search(user_name):
 
 def trending_search():
     """
-    This returns the top trends from twitter
+    This returns the top trends from twitter in the UK
     :return: trends_list which is a list of trending topics
     """
-    trends = api.trends_place(23424975)[0]["trends"]  # from the end of your code
+    trends = api.trends_place(23424975)[0][
+        "trends"
+    ]  # The integer is the location of the UK
     trends_list = [trend["name"] for trend in trends]
     return trends_list
 
