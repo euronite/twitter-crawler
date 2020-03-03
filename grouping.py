@@ -17,16 +17,23 @@ def get_all_new_tweets_text(all_new_tweets):
 
 
 def statistics(all_new_tweets, all_retweets, all_quote_tweets):
+    """
+    Produces statistics of the database
+    :param all_new_tweets:
+    :param all_retweets:
+    :param all_quote_tweets:
+    :return: mean_sentiment, mean_subjectivity, total_tweets
+    """
     length_all_quote_tweets = len(all_quote_tweets)
     length_all_retweets = len(all_retweets)
     length_all_tweets = len(all_new_tweets)
 
     # print(db_twitter.collections.stats())
-    print(
-        "Number of tweets collected: {}".format(
-            length_all_quote_tweets + length_all_retweets + length_all_tweets
-        )
-    )
+    total_tweets = length_all_quote_tweets + length_all_retweets + length_all_tweets
+    print(f"Number of all tweets collected: {total_tweets}")
+    print(f"Number of new tweets collected: {length_all_tweets}")
+    print(f"Number of retweets collected: {length_all_retweets}")
+    print(f"Number of quote tweets collected: {length_all_quote_tweets}")
 
     # Calculates mean sentiment, where 1 is very positive, -1 is very negative
     mean_sentiment = 0.0
@@ -43,6 +50,7 @@ def statistics(all_new_tweets, all_retweets, all_quote_tweets):
         mean_subjectivity += tweet["subjectivity"]
     mean_subjectivity = mean_subjectivity / length_all_tweets
     print("The mean subjectivity of retweets is: ", mean_subjectivity)
+    return mean_sentiment, mean_subjectivity, total_tweets
 
 
 def cluster_text(list_of_text):
@@ -52,11 +60,11 @@ def cluster_text(list_of_text):
     :param list_of_text: This is a list of tweet texts
     :return:
     """
-
+    print("Clustering text info saved the clustering.txt")
     vectorizer = TfidfVectorizer(stop_words="english")
     transform = vectorizer.fit_transform(list_of_text)
 
-    true_k = 40
+    true_k = 20
     model = MiniBatchKMeans(n_clusters=true_k, init="k-means++", max_iter=100, n_init=1)
     model.fit(transform)
     clusters = {}
@@ -68,27 +76,17 @@ def cluster_text(list_of_text):
 
     order_centroids = model.cluster_centers_.argsort()[:, ::-1]
     terms = vectorizer.get_feature_names()
-    print("Top terms per cluster:")
+    with open("clustering.txt", "w+") as f:
+        f.write("Top terms per cluster:\n")
     for i in range(true_k):
-        print("Cluster {}:".format(i))
-        print("Number of tweets in this cluster: {}".format(clusters[i]))
+        with open("clustering.txt", "a") as f:
+            f.write(f"Cluster {i}\n")
+            f.write(f"Number of tweets in this cluster: {clusters[i]}\n")
         term_list = []
         for ind in order_centroids[i, :10]:
-            term_list.append(terms[ind])
-        print("Keywords: {}".format(", ".join(term_list)))
-
-
-def directed_graph(list_of_tweets):
-    """
-    This generates a directed graph of users in regards to who tweeted whom
-    :param list_of_tweets: THis is a list of tweet texts to analyse
-    :return:
-    """
-    digraph = nx.DiGraph()
-    for i in list_of_tweets:
-        digraph.add_edge(i["retweet_user"], i["name"])
-    nx.draw_networkx(digraph)
-    plt.show()
+            with open("clustering.txt", "a") as f:
+                f.write(terms[ind] + "\n")
+            term_list.append(terms[ind] + "\n")
 
 
 def extract_important(tweet_objects_list):

@@ -64,7 +64,7 @@ def insert_tweet_to_db(status):
         "subjectivity": subjectivity,
     }
 
-    if hasattr(status, "retweeted_status)"):
+    if hasattr(status, "retweeted_status"):
         tweet_json["retweet_user"] = status.retweeted_status.user.screen_name
         retweet.insert_one(tweet_json)
     elif status.is_quote_status:

@@ -62,14 +62,13 @@ def start_rest_probe_trends():
     This starts the rest api probe
     :return:
     """
-    while True:
-        print("REST API getting trending tweets")
-        for i in trending_search():
-            print("Retrieving tweets for {}".format(i))
-            try:
-                if i[0] == "#":
-                    hashtag_search(i[1:])
-                else:
-                    text_search(i)
-            except Exception as e:
-                print(e)
+    print("REST API getting trending tweets")
+    for i in trending_search():
+        print("Retrieving tweets for {}".format(i))
+        try:
+            if i[0] == "#":
+                hashtag_search(i[1:])
+            else:
+                text_search(i)
+        except Exception as e:
+            print(e)

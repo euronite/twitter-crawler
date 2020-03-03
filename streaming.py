@@ -10,7 +10,8 @@ class StreamListener(tweepy.StreamListener):
             insert_tweet_to_db(status)
         except DuplicateKeyError:
             # TODO ask for help with incrementing errors
-            print("Error")
+            # TODO ask lecturer what sample data
+            pass
 
     def on_error(self, status_code):
         if status_code == 420:
