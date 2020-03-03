@@ -3,19 +3,6 @@ from textblob import TextBlob
 import pymongo
 import tweepy
 
-db_client = pymongo.MongoClient(
-    "mongodb://2314838k:37740025@localhost:27017/2314838kdb"
-)  # Database location is here
-db_twitter = db_client["2314838kdb"]
-new_tweet = db_twitter["new_tweet"]
-quote_tweet = db_twitter["quote_tweet"]
-retweet = db_twitter["retweet"]
-hashtag = db_twitter["hashtag"]
-
-# This code below can be used to drop a collection
-# for collection in db_twitter.list_collection_names():
-#     print(db_twitter[collection].drop())
-
 """
 LOAD API KEYS IN A JSON FILE.
 -----
@@ -27,6 +14,17 @@ with open("api.json", "r") as f:
 auth = tweepy.OAuthHandler(text["TWITTER_APP_KEY"], text["TWITTER_APP_SECRET"])
 auth.set_access_token(text["TWITTER_KEY"], text["TWITTER_SECRET"])
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+
+db_client = pymongo.MongoClient(text["MONGO_LOCATION"])  # Database location is here
+db_twitter = db_client["2314838kdb"]
+new_tweet = db_twitter["new_tweet"]
+quote_tweet = db_twitter["quote_tweet"]
+retweet = db_twitter["retweet"]
+hashtag = db_twitter["hashtag"]
+
+# This code below can be used to drop a collection
+# for collection in db_twitter.list_collection_names():
+#     print(db_twitter[collection].drop())
 
 
 def insert_tweet_to_db(status):
