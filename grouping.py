@@ -58,7 +58,7 @@ def cluster_text(list_of_text):
     This uses k-means clustering from sklearn to cluster the text
     Based on the tutorial here: https://pythonprogramminglanguage.com/kmeans-text-clustering/
     :param list_of_text: This is a list of tweet texts
-    :return:
+    :return: model.labels_ This is a list of integer number where each tweet is in a specific cluster.
     """
     print("Clustering text info saved the clustering.txt")
     vectorizer = TfidfVectorizer(stop_words="english")

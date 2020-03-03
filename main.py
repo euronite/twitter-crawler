@@ -70,24 +70,14 @@ for num, tweet in zip(tweet_cluster_number, all_new_tweets):
 
 # Process the clusters
 for cluster in clustering.keys():
-    if len(clustering[cluster]) < 5:
+    cluster_list = clustering[cluster]
+    cluster_size = len(cluster_list)
+    if cluster_size < 5:
         # disregard clusters of size 5 or less.
         continue
     print("Cluster number info: {}".format(cluster))
-    print("Number of tweets: {}".format(len(clustering[cluster])))
-    cluster_mentions_dict = mentions_graph(clustering[cluster])
+    print("Number of tweets: {}".format(cluster_size))
+    cluster_mentions_dict = mentions_graph(cluster_list)
     cluster_ties, cluster_triads = find_ties_triad(cluster_mentions_dict)
     print("New tweet ties: {}".format(ties))
     print("New tweet triads: {}".format(triads))
-
-
-with open("information.txt", "w+") as f:
-    f.write("Statistics:\n")
-    f.write(f"Mean Sentiment:{mean_sentiment}\n")
-    f.write(f"Mean Subjectivity: {mean_subjectivity}\n")
-    f.write(f"Total number of tweets collected: {total_tweets}\n")
-    f.write(f"Most Frequent Hashtags: {most_frequent_hashtags}\n")
-    f.write(f"Most Frequent Users: {most_frequent_users}\n")
-    f.write(f"Most Frequent Symbols: {most_frequent_symbols}\n")
-    f.write(f"Number of Triads in new tweets: {triads}\n")
-    f.write(f"Number of Ties in new tweets: {ties}\n")

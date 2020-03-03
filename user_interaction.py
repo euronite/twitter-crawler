@@ -23,6 +23,11 @@ def mentions_graph(tweets_list):
 
 
 def hashtags_groups(tweet_list):
+    """
+    This groups the hashtags in a similar format as user mentions, except excludes the frequency as d list in a dict.
+    :param tweet_list: list of tweet objects
+    :return: hashtag_dict dictionary of hashtags and a list of hashtags they appear with.
+    """
     hashtag_dict = {}
     for tweet in tweet_list:
         if len(tweet["hashtags"]) == 0:
@@ -42,6 +47,15 @@ def hashtags_groups(tweet_list):
 
 
 def find_ties_triad(mentions_group_dict):
+    """
+    This finds ties and triads from a mentions group
+    :param mentions_group_dict:
+    :return:
+    ties
+        This the number of ties found
+    triads
+        This is the number of triads found
+    """
     ties = 0
     for user in mentions_group_dict:
         for mention_user in mentions_group_dict[user]:
@@ -68,7 +82,8 @@ def find_ties_triad(mentions_group_dict):
                             mentions_group_dict, second_mention_user, user
                         )
                     ):
-                        # this checks that other users have mentioned back so we now know mentioned1 has mentioned original and mentioned2 has too.
+                        # this checks that other users have mentioned back so we now know mentioned1 has mentioned
+                        # original and mentioned2 has too.
                         if check_mentions(
                             mentions_group_dict, mention_user, second_mention_user
                         ) and check_mentions(
