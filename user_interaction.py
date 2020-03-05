@@ -108,3 +108,19 @@ def check_mentions(mentions_group_dict, user1, user2):
         return True
     else:
         return False
+
+
+def user_interaction_graph_stats(mentions_graph_dict):
+    """
+    This returns the user who has mentioned the most number of times from mentions graph
+    :param mentions_graph_dict:
+    :return: most_mentioned_user str
+    :return: most_mentioned_times int
+    """
+    most_mentioned_times = 0
+    most_mentioned_user = None
+    for user in mentions_graph_dict.keys():
+        if len(mentions_graph_dict[user]) > most_mentioned_times:
+            most_mentioned_times = len(mentions_graph_dict[user])
+            most_mentioned_user = user
+    return most_mentioned_user, most_mentioned_times
