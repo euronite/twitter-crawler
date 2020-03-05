@@ -4,6 +4,14 @@ from pymongo.errors import DuplicateKeyError
 rest_api_error = 0
 
 
+def return_rest_errors():
+    """
+    This returns the number of duplicate tweets collected for rest probes
+    :return: rest_api_error int
+    """
+    return rest_api_error
+
+
 def hashtag_search(search_hashtag: str):
     """
     Searches for hashtag using twitter API and returns 100 tweets which is then added to the DB

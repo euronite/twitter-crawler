@@ -8,6 +8,14 @@ streaming_api_error = (
 )  # This is a global variable to count the duplicate key errors in streaming and REST
 
 
+def return_streaming_errors():
+    """
+    This returns the number of duplicate tweets collected
+    :return: streaming_api_error int
+    """
+    return streaming_api_error
+
+
 class StreamListener(tweepy.StreamListener):
     def on_status(self, status):
         try:
