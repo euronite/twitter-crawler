@@ -22,9 +22,16 @@ quote_tweet = db_twitter["quote_tweet"]
 retweet = db_twitter["retweet"]
 hashtag = db_twitter["hashtag"]
 
+
 # This code below can be used to drop a collection
 # for collection in db_twitter.list_collection_names():
 #     print(db_twitter[collection].drop())
+
+
+def sample_data(tweet_object_list):
+    with open("sample_data.csv", "w+") as file:
+        for tweet in tweet_object_list:
+            file.write("{},{}\n".format(tweet["_id"], tweet["text"]))
 
 
 def insert_tweet_to_db(status):
