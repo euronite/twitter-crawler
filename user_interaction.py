@@ -124,3 +124,19 @@ def user_interaction_graph_stats(mentions_graph_dict):
             most_mentioned_times = len(mentions_graph_dict[user])
             most_mentioned_user = user
     return most_mentioned_user, most_mentioned_times
+
+
+def hashtag_interaction_stats(hashtag_dict):
+    """
+    Finds and returns the biggest hashtag group
+    :param hashtag_dict:
+    :return: biggest_hashtag_group
+    """
+    biggest_hashtag_group = None
+    count = 0
+    for hashtag in hashtag_dict.keys():
+        size_hashtag = len(hashtag_dict[hashtag])
+        if size_hashtag > count:
+            biggest_hashtag_group = hashtag
+            count = size_hashtag
+    return hashtag_dict[biggest_hashtag_group]
