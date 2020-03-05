@@ -2,6 +2,7 @@ from config import *
 from filter import *
 import time
 from pymongo.errors import DuplicateKeyError
+from rest_api import user_search
 
 streaming_api_error = (
     0
@@ -23,6 +24,8 @@ class StreamListener(tweepy.StreamListener):
         except DuplicateKeyError:
             global streaming_api_error
             streaming_api_error += 1
+        if status["followers"] > 100000:
+            user_search(status["name"])
 
     def on_error(self, status_code):
         if status_code == 420:
