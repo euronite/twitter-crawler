@@ -1,5 +1,3 @@
-import matplotlib.pyplot as plt
-import networkx as nx
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import MiniBatchKMeans
 from collections import Counter

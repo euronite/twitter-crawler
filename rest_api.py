@@ -1,4 +1,7 @@
 from config import *
+from pymongo.errors import DuplicateKeyError
+
+rest_api_error = 0
 
 
 def hashtag_search(search_hashtag: str):
@@ -13,8 +16,9 @@ def hashtag_search(search_hashtag: str):
     ):
         try:
             insert_tweet_to_db(status)
-        except Exception as e:
-            print(e)
+        except DuplicateKeyError:
+            global rest_api_error
+            rest_api_error += 1
 
 
 def text_search(search_string: str):
@@ -29,8 +33,9 @@ def text_search(search_string: str):
     ):
         try:
             insert_tweet_to_db(status)
-        except Exception as e:
-            print(e)
+        except DuplicateKeyError:
+            global rest_api_error
+            rest_api_error += 1
 
 
 def user_search(user_name):
@@ -43,8 +48,9 @@ def user_search(user_name):
     for tweet in tweets:
         try:
             insert_tweet_to_db(tweet)
-        except Exception as e:
-            print(e)
+        except DuplicateKeyError:
+            global rest_api_error
+            rest_api_error += 1
 
 
 def trending_search():
@@ -61,11 +67,12 @@ def trending_search():
 
 def start_rest_probe_trends():
     """
-    This starts the rest api probe
-    :return:
+    This starts the rest api probe for trending keywords.  and returns the top trending words
+    :return: trending_list list of trending keyboards
     """
     print("REST API getting trending tweets")
-    for i in trending_search():
+    trending_list = trending_search()[:14]  # get the top 14 trending topics
+    for i in trending_list:
         print("Retrieving tweets for {}".format(i))
         try:
             if i[0] == "#":
@@ -74,3 +81,4 @@ def start_rest_probe_trends():
                 text_search(i)
         except Exception as e:
             print(e)
+    return trending_list
