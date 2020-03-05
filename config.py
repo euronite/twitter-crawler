@@ -6,17 +6,18 @@ import tweepy
 """
 LOAD API KEYS IN A JSON FILE.
 -----
-api.json file needed containing API keys for twitter.
+api.json file needed containing API keys for twitter and also for the location of the MongoDB.
+Can manually insert the keys in place and comment out the first two lines.
 """
-
 with open("api.json", "r") as f:
     text = json.load(f)
 auth = tweepy.OAuthHandler(text["TWITTER_APP_KEY"], text["TWITTER_APP_SECRET"])
 auth.set_access_token(text["TWITTER_KEY"], text["TWITTER_SECRET"])
+db_client = pymongo.MongoClient(text["MONGO_LOCATION"])  # Database location is here
+
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
-db_client = pymongo.MongoClient(text["MONGO_LOCATION"])  # Database location is here
-db_twitter = db_client["2314838kdb"]
+db_twitter = db_client["2314838kdb"]  # Name of the database
 new_tweet = db_twitter["new_tweet"]
 quote_tweet = db_twitter["quote_tweet"]
 retweet = db_twitter["retweet"]
@@ -29,9 +30,14 @@ hashtag = db_twitter["hashtag"]
 
 
 def sample_data(tweet_object_list):
+    """
+    This generates sample data of tweets with text and ID as csv
+    :param tweet_object_list: list of tweet objects
+    :return:
+    """
     with open("sample_data.csv", "w+") as file:
         for tweet in tweet_object_list:
-            file.write("{},{}\n".format(tweet["_id"], tweet["text"]))
+            file.write('{},"{}"\n'.format(tweet["_id"], tweet["text"]))
 
 
 def insert_tweet_to_db(status):
