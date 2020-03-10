@@ -1,6 +1,7 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import MiniBatchKMeans
 from collections import Counter
+from rest_api import return_rest_tweets_number
 
 
 def get_all_new_tweets_text(all_new_tweets):
@@ -28,10 +29,13 @@ def statistics(all_new_tweets, all_retweets, all_quote_tweets):
 
     # print(db_twitter.collections.stats())
     total_tweets = length_all_quote_tweets + length_all_retweets + length_all_tweets
-    print(f"Number of all tweets collected: {total_tweets}")
+    print(
+        f"Number of all tweets via streaming collected: {total_tweets - return_rest_tweets_number()}"
+    )
     print(f"Number of new tweets collected: {length_all_tweets}")
     print(f"Number of retweets collected: {length_all_retweets}")
     print(f"Number of quote tweets collected: {length_all_quote_tweets}")
+    print(f"Number of tweets collected via rest is {return_rest_tweets_number()}")
 
     # Calculates mean sentiment, where 1 is very positive, -1 is very negative
     mean_sentiment = 0.0
@@ -62,7 +66,7 @@ def cluster_text(list_of_text):
     vectorizer = TfidfVectorizer(stop_words="english")
     transform = vectorizer.fit_transform(list_of_text)
 
-    true_k = 20
+    true_k = 70
     model = MiniBatchKMeans(n_clusters=true_k, init="k-means++", max_iter=100, n_init=1)
     model.fit(transform)
     clusters = {}

@@ -2,13 +2,14 @@ from config import *
 from pymongo.errors import DuplicateKeyError
 
 rest_api_error = 0
+rest_tweets_collected = 0
+
+
+def return_rest_tweets_number():
+    return rest_tweets_collected
 
 
 def return_rest_errors():
-    """
-    This returns the number of duplicate tweets collected for rest probes
-    :return: rest_api_error int
-    """
     return rest_api_error
 
 
@@ -23,6 +24,8 @@ def hashtag_search(search_hashtag: str):
         number_of_tweets
     ):
         try:
+            global rest_tweets_collected
+            rest_tweets_collected += 1
             insert_tweet_to_db(status)
         except DuplicateKeyError:
             global rest_api_error
@@ -40,6 +43,8 @@ def text_search(search_string: str):
         number_of_tweets
     ):
         try:
+            global rest_tweets_collected
+            rest_tweets_collected += 1
             insert_tweet_to_db(status)
         except DuplicateKeyError:
             global rest_api_error
@@ -55,6 +60,8 @@ def user_search(user_name):
     tweets = api.user_timeline(screen_name=user_name, count=200, include_rts=True)
     for tweet in tweets:
         try:
+            global rest_tweets_collected
+            rest_tweets_collected += 1
             insert_tweet_to_db(tweet)
         except DuplicateKeyError:
             global rest_api_error
@@ -82,11 +89,11 @@ def start_rest_probe_trends():
     trending_list = trending_search()[:14]  # get the top 14 trending topics
     for i in trending_list:
         print("Retrieving tweets for {}".format(i))
-        try:
-            if i[0] == "#":
-                hashtag_search(i[1:])
-            else:
-                text_search(i)
-        except Exception as e:
-            print(e)
+        # try:
+        #     if i[0] == "#":
+        #         hashtag_search(i[1:])
+        #     else:
+        #         text_search(i)
+        # except Exception as e:
+        #     print(e)
     return trending_list

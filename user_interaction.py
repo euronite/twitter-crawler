@@ -27,13 +27,16 @@ def hashtags_groups(tweet_list):
     This groups the hashtags in a similar format as user mentions, except excludes the frequency as d list in a dict.
     :param tweet_list: list of tweet objects
     :return: hashtag_dict dictionary of hashtags and a list of hashtags they appear with.
+    :return: count_hashtags number of hashtags found
     """
+    count_hashtags = 0
     hashtag_dict = {}
     for tweet in tweet_list:
         if len(tweet["hashtags"]) == 0:
             # ignore tweets with no hashtags
             continue
         for hashtag in tweet["hashtags"]:
+            count_hashtags += 1
             if hashtag["text"] not in hashtag_dict:
                 hashtag_dict[hashtag["text"]] = []
             for hashtag2 in tweet["hashtags"]:
@@ -43,7 +46,7 @@ def hashtags_groups(tweet_list):
                 ):
                     # add only unique hashtags to hashtags list
                     hashtag_dict[hashtag["text"]].append(hashtag2["text"])
-    return hashtag_dict
+    return hashtag_dict, count_hashtags
 
 
 def find_ties_triad(mentions_group_dict):
@@ -139,4 +142,5 @@ def hashtag_interaction_stats(hashtag_dict):
         if size_hashtag > count:
             biggest_hashtag_group = hashtag
             count = size_hashtag
+
     return hashtag_dict[biggest_hashtag_group]

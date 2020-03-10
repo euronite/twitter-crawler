@@ -24,8 +24,9 @@ class StreamListener(tweepy.StreamListener):
         except DuplicateKeyError:
             global streaming_api_error
             streaming_api_error += 1
-        if status["followers"] > 100000:
-            user_search(status["name"])
+        if status.user.followers_count > 100000:
+            # Ideally this would be done async
+            user_search(status.user.screen_name)
 
     def on_error(self, status_code):
         if status_code == 420:
