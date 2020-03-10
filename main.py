@@ -10,7 +10,9 @@ trending_keywords = (
     start_rest_probe_trends()
 )  # This gets trends and also gets 100 tweets per trend before starting streaming API
 print("Running Streaming API!")
-# run_stream(trending_keywords, 3600)  # runs stream based on top 100 most common words and trending keywords
+run_stream(
+    trending_keywords, 1
+)  # runs stream based on top 100 most common words and trending keywords
 print("Finished Streaming API!")
 print("Now processing tweets")
 all_new_tweets = list(new_tweet.find({}))

@@ -89,11 +89,11 @@ def start_rest_probe_trends():
     trending_list = trending_search()[:14]  # get the top 14 trending topics
     for i in trending_list:
         print("Retrieving tweets for {}".format(i))
-        # try:
-        #     if i[0] == "#":
-        #         hashtag_search(i[1:])
-        #     else:
-        #         text_search(i)
-        # except Exception as e:
-        #     print(e)
+        try:
+            if i[0] == "#":
+                hashtag_search(i[1:])
+            else:
+                text_search(i)
+        except Exception as e:
+            print(e)
     return trending_list

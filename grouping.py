@@ -67,6 +67,7 @@ def cluster_text(list_of_text):
     transform = vectorizer.fit_transform(list_of_text)
 
     true_k = 70
+
     model = MiniBatchKMeans(n_clusters=true_k, init="k-means++", max_iter=100, n_init=1)
     model.fit(transform)
     clusters = {}
