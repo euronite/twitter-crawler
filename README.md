@@ -1,5 +1,5 @@
 # twitter-crawler
-Coursework for Uni Y3, Web Science. 2314848k
+Coursework for Uni Y3, Web Science.
 
 To setup and run the program, dependencies are located in a requirements.txt file in the root directory. Run pip install -r requirements.txt to install. 
 The API Keys and database URL can be inserted in the config.py file directly, and the json file reader can be removed, or as a api.json file. 
